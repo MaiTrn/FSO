@@ -21,8 +21,8 @@ const App = () => {
     setScore(score - 1);
     setBad(bad + 1);
   };
-  const Average = () => (score / total).toFixed(1);
-  const Positive = () => ((good / total) * 100).toFixed(1);
+  const Average = (score / total).toFixed(1);
+  const Positive = ((good / total) * 100).toFixed(1);
 
   const Header = ({ text }) => <h1>{text}</h1>;
   const Button = ({ text, onClick }) => (
@@ -54,8 +54,8 @@ const App = () => {
           <StatisticLine text="Neutral" value={neutral} />
           <StatisticLine text="Bad" value={bad} />
           <StatisticLine text="All" value={total} />
-          <StatisticLine text="Average" value={Average()} />
-          <StatisticLine text="Positive" value={`${Positive()}%`} />
+          <StatisticLine text="Average" value={Average} />
+          <StatisticLine text="Positive" value={`${Positive}%`} />
         </tbody>
       </table>
     );
