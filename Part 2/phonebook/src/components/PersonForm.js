@@ -4,7 +4,9 @@ const PersonForm = ({ personNames, onSubmit, onChangeNumber }) => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
 
-  const handleNameChange = (event) => setNewName(event.target.value);
+  const handleNameChange = (event) => {
+    setNewName(event.target.value);
+  };
 
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value);
@@ -12,15 +14,16 @@ const PersonForm = ({ personNames, onSubmit, onChangeNumber }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (personNames.indexOf(newName.toLowerCase()) !== -1) {
+    const name = newName.trim();
+    if (personNames.indexOf(name.toLowerCase()) !== -1) {
       if (
         window.confirm(
-          `${newName} is already added to the phonebook, replace the old number with the new one?`
+          `${name} is already added to the phonebook, replace the old number with the new one?`
         )
       )
-        onChangeNumber(newName, newNumber);
+        onChangeNumber(name, newNumber);
     } else {
-      onSubmit(newName, newNumber);
+      onSubmit(name, newNumber);
     }
     setNewName("");
     setNewNumber("");
@@ -33,7 +36,12 @@ const PersonForm = ({ personNames, onSubmit, onChangeNumber }) => {
           <tr>
             <td>Name:</td>
             <td>
-              <input value={newName} onChange={handleNameChange} required />
+              <input
+                pattern="[a-zA-Z\s]+"
+                value={newName}
+                onChange={handleNameChange}
+                required
+              />
             </td>
           </tr>
           <tr>

@@ -60,7 +60,7 @@ const App = () => {
       .update(personToChange.id, changedPerson)
       .then((data) => {
         setPersons(persons.map((p) => (p.id !== personToChange.id ? p : data)));
-        setConfirmMessage(`Change number of ${newName} to ${newNumber}`);
+        setConfirmMessage(`Changed number of ${newName} to ${newNumber}`);
         setTimeout(() => {
           setConfirmMessage(null);
         }, 5000);
