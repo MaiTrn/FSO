@@ -40,6 +40,9 @@ const App = () => {
       })
       .catch((error) => {
         setErrorMessage(error);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
   };
   const onRemove = (id) => {
@@ -50,6 +53,9 @@ const App = () => {
       })
       .catch((error) => {
         setErrorMessage(error);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
   };
   const onChangeNumber = (newName, newNumber) => {
