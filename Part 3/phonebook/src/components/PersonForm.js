@@ -51,8 +51,6 @@ const PersonForm = ({ personNames, onSubmit, onChangeNumber }) => {
                 type="tel"
                 value={newNumber}
                 onChange={handleNumberChange}
-                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                placeholder="000-000-0000"
                 required
               />
             </td>

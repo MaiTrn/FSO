@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import personService from "./services/persons";
-import PersonInfo from "./components/PersonInfo";
+import PersonList from "./components/PersonList";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Notifications from "./components/Notifications";
@@ -18,12 +18,6 @@ const App = () => {
     });
   }, []);
 
-  const personNames = persons.map((person) => person.name.toLowerCase());
-  const filteredPersons = persons.filter((person) =>
-    person.name.toLowerCase().match(filterName.toLowerCase())
-  );
-  const list = filterName.length === 0 ? persons : filteredPersons;
-
   const onSubmit = (newName, newNumber) => {
     const newPerson = {
       name: newName,
@@ -39,7 +33,10 @@ const App = () => {
         }, 5000);
       })
       .catch((error) => {
-        setErrorMessage(error);
+        setErrorMessage(error.response.data.error);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
   };
   const onRemove = (id) => {
@@ -47,9 +44,16 @@ const App = () => {
       .remove(id)
       .then(() => {
         setPersons(persons.filter((p) => p.id !== id));
+        setConfirmMessage(`Removed ${id}`);
+        setTimeout(() => {
+          setConfirmMessage(null);
+        }, 5000);
       })
       .catch((error) => {
         setErrorMessage(error);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
   };
   const onChangeNumber = (newName, newNumber) => {
@@ -65,16 +69,19 @@ const App = () => {
           setConfirmMessage(null);
         }, 5000);
       })
-      .catch(() => {
-        setErrorMessage(
-          `The person ${personToChange.name} was already deleted from the server`
-        );
+      .catch((error) => {
+        setErrorMessage(error.response.data.error);
         setTimeout(() => {
           setErrorMessage(null);
         }, 5000);
-        setPersons(persons.filter((p) => p.id !== personToChange.id));
       });
   };
+
+  const personNames = persons.map((person) => person.name.toLowerCase());
+  const filteredPersons = persons.filter((person) =>
+    person.name.toLowerCase().match(filterName.toLowerCase())
+  );
+  const list = filterName.length === 0 ? persons : filteredPersons;
 
   return (
     <div>
@@ -93,7 +100,7 @@ const App = () => {
       <Notifications message={errorMessage} notificationType="error" />
 
       <h2>Contacts List</h2>
-      <PersonInfo {...{ list, onRemove }} />
+      <PersonList {...{ list, onRemove }} />
     </div>
   );
 };

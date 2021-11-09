@@ -18,7 +18,7 @@ const Person = ({ person, onRemove }) => {
   );
 };
 
-const PersonInfo = ({ list, onRemove }) => (
+const PersonList = ({ list, onRemove }) => (
   <table>
     <tbody>
       {list.map((person) => (
@@ -28,4 +28,4 @@ const PersonInfo = ({ list, onRemove }) => (
   </table>
 );
 
-export default PersonInfo;
+export default PersonList;
