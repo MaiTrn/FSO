@@ -174,18 +174,20 @@ describe("updating a blog", () => {
   test("returns the updated blog if it is valid", async () => {
     const blogs = await helper.blogsInDB();
     const blogToUpdate = blogs[0];
-    blogToUpdate.likes = 9;
+    const update = {
+      likes: 9,
+    };
 
     const token = await login();
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
       .set("Authorization", "bearer " + token)
-      .send(blogToUpdate)
+      .send(update)
       .expect(200)
       .expect("Content-Type", /application\/json/);
 
     const blogsAtEnd = await helper.blogsInDB();
-    expect(blogsAtEnd[0]).toEqual(blogToUpdate);
+    expect(blogsAtEnd[0].likes).toEqual(update.likes);
   });
 });
 
