@@ -84,4 +84,18 @@ blogsRouter.delete("/:id", async (request, response) => {
       .end();
 });
 
+blogsRouter.post("/:id/comments", async (request, response) => {
+  const id = request.params.id;
+  const blog = await Blog.findById(id);
+  if (!blog) {
+    response
+      .status(404)
+      .json({ error: `cannot find blog with id ${id}` })
+      .end();
+  }
+  blog.comments = blog.comments.concat(request.body.comment);
+  const savedBlog = await blog.save();
+  response.status(201).json(savedBlog);
+});
+
 module.exports = blogsRouter;
