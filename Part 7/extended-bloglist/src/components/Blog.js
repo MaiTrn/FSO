@@ -1,35 +1,106 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
+import { Form, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-const Blog = ({ blog, handleLike, handleRemove, own }) => {
-  const [visible, setVisible] = useState(false);
+import {
+  notifyWith,
+  initBlogs,
+  likeBlog,
+  removeBlog,
+  commentBlog,
+} from "../redux/actions";
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
+const Blog = ({ blog, loggedIn, own }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!loggedIn) {
+      navigate("/");
+    }
+  }, [loggedIn, navigate]);
+
+  if (!blog) {
+    return null;
+  }
+
+  const handleLike = async () => {
+    const likedBlog = {
+      ...blog,
+      likes: blog.likes + 1,
+    };
+    dispatch(likeBlog(likedBlog));
+    dispatch(initBlogs());
+  };
+  const handleRemove = async () => {
+    const ok = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`);
+    if (ok) {
+      dispatch(removeBlog(blog.id));
+      dispatch(
+        notifyWith(
+          {
+            message: `Blog ${blog.title} by ${blog.author} deleted`,
+            type: "success",
+          },
+          5
+        )
+      );
+      dispatch(initBlogs());
+      navigate("/");
+    }
+  };
+  const handleComment = async (event) => {
+    event.preventDefault();
+    const comment = event.target.comment.value;
+    dispatch(commentBlog(blog.id, { comment }));
+    dispatch(
+      notifyWith(
+        {
+          message: "comment added",
+          type: "success",
+        },
+        5
+      )
+    );
   };
 
-  const label = visible ? "hide" : "view";
   return (
-    <div style={blogStyle} className="blog">
-      <div>
-        <i>{blog.title}</i> by {blog.author}{" "}
-        <button onClick={() => setVisible(!visible)}>{label}</button>
-      </div>
-      {visible && (
-        <div>
-          <div>{blog.url}</div>
-          <div>
-            likes {blog.likes}
-            <button onClick={() => handleLike(blog.id)}>like</button>
-          </div>
-          <div>{blog.userId.name}</div>
-          {own && <button onClick={() => handleRemove(blog.id)}>remove</button>}
-        </div>
+    <div>
+      <h2>Blogs</h2>
+      <h2>
+        {blog.title} by {blog.author}
+      </h2>
+      <a href={blog.url}>{blog.url}</a>
+      <p>
+        {blog.likes} likes{" "}
+        <Button variant="primary" onClick={handleLike}>
+          <i class="bi bi-hand-thumbs-up"></i>
+        </Button>
+      </p>
+      <p>added by {blog.userId.name}</p>
+      {own && (
+        <Button variant="danger" onClick={handleRemove}>
+          remove
+        </Button>
       )}
+      <h3>comments</h3>
+      <Form onSubmit={handleComment}>
+        <Form.Group>
+          <Form.Control id="comment" name="comment" />
+          <Button type="submit" variant="light">
+            add comment
+          </Button>
+        </Form.Group>
+      </Form>
+      <ul>
+        {blog.comments.length === 0 ? (
+          <p>No comments...</p>
+        ) : (
+          blog.comments.map((comment, index) => <li key={index}>{comment}</li>)
+        )}
+      </ul>
     </div>
   );
 };
@@ -39,9 +110,7 @@ Blog.propTypes = {
     title: PropTypes.string.isRequired,
     author: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
-  }).isRequired,
-  handleLike: PropTypes.func.isRequired,
-  handleRemove: PropTypes.func.isRequired,
+  }),
   own: PropTypes.bool.isRequired,
 };
 

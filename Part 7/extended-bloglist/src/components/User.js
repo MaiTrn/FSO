@@ -8,9 +8,9 @@ const User = ({ loggedIn, user }) => {
       navigate("/");
     }
   }, [loggedIn, navigate]);
-  //   if (!user) {
-  //     return null;
-  //   }
+  if (!user) {
+    return null;
+  }
 
   return (
     <div>

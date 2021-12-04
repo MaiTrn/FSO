@@ -1,14 +1,36 @@
+import { notifyWith } from ".";
 import loginService from "../../services/login";
 import storage from "../../utils/storage";
 
 export const loginUser = (user) => {
   return async (dispatch) => {
-    const newUser = await loginService.login(user);
-    storage.saveUser(newUser);
-    dispatch({
-      type: "LOGIN_USER",
-      data: newUser,
-    });
+    try {
+      const newUser = await loginService.login(user);
+      storage.saveUser(newUser);
+      dispatch({
+        type: "LOGIN_USER",
+        data: newUser,
+      });
+      dispatch(
+        notifyWith(
+          {
+            message: `${newUser.name} welcome back!`,
+            type: "success",
+          },
+          5
+        )
+      );
+    } catch (exception) {
+      dispatch(
+        notifyWith(
+          {
+            message: "wrong username/password",
+            type: "danger",
+          },
+          5
+        )
+      );
+    }
   };
 };
 

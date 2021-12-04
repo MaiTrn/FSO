@@ -1,54 +1,55 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch } from "react-redux";
+import { Form, Button } from "react-bootstrap";
+import { notifyWith, createBlog } from "../redux/actions";
 
-const NewBlog = (props) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+const NewBlog = ({ blogRef }) => {
+  const dispatch = useDispatch();
 
   const handleNewBlog = (event) => {
     event.preventDefault();
 
-    props.createBlog({
-      title,
-      author,
-      url,
-    });
-
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    try {
+      const author = event.target.author.value;
+      const title = event.target.title.value;
+      const url = event.target.url.value;
+      dispatch(createBlog({ author, title, url }));
+      blogRef.current.toggleVisibility();
+      notifyWith(
+        {
+          message: `a new blog '${title}' by ${author} added!`,
+          type: "success",
+        },
+        5
+      );
+    } catch (exception) {
+      console.log(exception);
+      notifyWith(
+        {
+          message: "An error occurred while trying to create new blog",
+          type: "danger",
+        },
+        5
+      );
+    }
   };
 
   return (
     <div>
       <h2>create new</h2>
-      <form onSubmit={handleNewBlog}>
-        <div>
-          author
-          <input
-            id="author"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          title
-          <input
-            id="title"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          url
-          <input
-            id="url"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <button id="create">create</button>
-      </form>
+      <Form onSubmit={handleNewBlog}>
+        <Form.Group>
+          <Form.Label>author </Form.Label>
+          <Form.Control type="text" id="author" name="author" />
+          <Form.Label>title</Form.Label>
+          <Form.Control type="text" id="title" name="title" />
+          <Form.Label>url </Form.Label>
+          <Form.Control type="text" id="url" name="url" />
+          <Button variant="primary" id="create" type="submit">
+            create
+          </Button>
+        </Form.Group>
+      </Form>
     </div>
   );
 };

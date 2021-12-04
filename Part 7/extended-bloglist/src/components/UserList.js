@@ -8,6 +8,7 @@ const UserList = ({ loggedIn, users }) => {
       navigate("/");
     }
   }, [loggedIn, navigate]);
+  if (!users) return null;
 
   const lineStyle = {
     width: "100px",

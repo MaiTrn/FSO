@@ -7,8 +7,10 @@ const loadUser = () => JSON.parse(window.localStorage.getItem(storageKey));
 
 const logoutUser = () => window.localStorage.removeItem(storageKey);
 
-export default {
+const storage = {
   saveUser,
   loadUser,
   logoutUser,
 };
+
+export default storage;

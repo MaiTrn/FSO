@@ -1,37 +1,45 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Form, Button } from "react-bootstrap";
+import { loginUser } from "../redux/actions";
 
-const LoginForm = ({ login }) => {
+const LoginForm = () => {
+  const dispatch = useDispatch();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
-    login({ username, password });
+
+    dispatch(loginUser({ username, password }));
 
     setUsername("");
     setPassword("");
   };
   return (
     <div>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
+      <Form onSubmit={handleLogin}>
+        <Form.Group>
+          <Form.Label>username </Form.Label>
+          <Form.Control
             id="username"
+            type="text"
             value={username}
             onChange={({ target }) => setUsername(target.value)}
           />
-        </div>
-        <div>
-          password
-          <input
+          <Form.Label>password </Form.Label>
+          <Form.Control
+            type="password"
             id="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
-        </div>
-        <button id="login">login</button>
-      </form>
+          <Button variant="primary" id="login" type="submit">
+            login
+          </Button>
+        </Form.Group>
+      </Form>
     </div>
   );
 };

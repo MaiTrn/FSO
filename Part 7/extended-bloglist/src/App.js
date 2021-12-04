@@ -1,170 +1,90 @@
-import React, { useEffect } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useRef } from "react";
 import { Routes, Route, useMatch } from "react-router-dom";
 
+import BlogList from "./components/BlogList";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import NewBlog from "./components/NewBlog";
 import LoginForm from "./components/LoginForm";
 
-import {
-  notifyWith,
-  initBlogs,
-  createBlog,
-  likeBlog,
-  removeBlog,
-  loginUser,
-  logoutUser,
-  loadUser,
-  initUsers,
-} from "./redux/actions";
+import { initBlogs, loadUser, initUsers } from "./redux/actions";
 import UserList from "./components/UserList";
 import Menu from "./components/Menu";
 import User from "./components/User";
+import { useDispatch, useSelector } from "react-redux";
 
-const App = ({
-  initBlogs,
-  notifyWith,
-  createBlog,
-  likeBlog,
-  removeBlog,
-  loginUser,
-  logoutUser,
-  loadUser,
-  initUsers,
-  blogs,
-  user,
-  users,
-}) => {
-  const blogFormRef = React.createRef();
-  const userMatch = useMatch("/users/:id");
+const App = () => {
+  const dispatch = useDispatch();
 
-  const userBydId = (id) => users.find((b) => b.id === id);
-  const matchedUser = userMatch ? userBydId(userMatch.params.id) : null;
+  const blogFormRef = useRef();
+  const user = useSelector(({ user }) => user);
 
   useEffect(() => {
     if (user !== null) {
-      initBlogs();
-      initUsers();
+      dispatch(initBlogs());
+      dispatch(initUsers());
     }
-  }, [user, initBlogs, initUsers]);
+  }, [user, dispatch]);
 
   useEffect(() => {
-    loadUser();
-  }, [loadUser]);
+    dispatch(loadUser());
+  }, [dispatch]);
 
-  const handleLogin = async (userObject) => {
-    try {
-      await loginUser(userObject);
-      notifyWith(
-        {
-          message: `${userObject.username} welcome back!`,
-          type: "success",
-        },
-        5
-      );
-    } catch (exception) {
-      console.log(exception);
-      notifyWith(
-        {
-          message: "wrong username/password",
-          type: "error",
-        },
-        5
-      );
-    }
-  };
+  const blogs = useSelector(({ blogs }) => blogs);
+  const users = useSelector(({ users }) => users);
+  const userMatch = useMatch("/users/:id");
+  const blogMatch = useMatch("/blogs/:id");
 
-  const addBlog = async (blog) => {
-    try {
-      createBlog(blog);
-      blogFormRef.current.toggleVisibility();
-      notifyWith(
-        {
-          message: `a new blog '${blog.title}' by ${blog.author} added!`,
-          type: "success",
-        },
-        5
-      );
-    } catch (exception) {
-      console.log(exception);
-    }
-  };
+  const userBydId = (id) => users.find((u) => u.id === id);
+  const matchedUser = userMatch ? userBydId(userMatch.params.id) : null;
 
-  const handleLike = async (id) => {
-    const blogToLike = blogs.find((b) => b.id === id);
-    const likedBlog = {
-      ...blogToLike,
-      likes: blogToLike.likes + 1,
-    };
-    likeBlog(likedBlog);
-    initBlogs();
-  };
-
-  const handleRemove = async (id) => {
-    const blogToRemove = blogs.find((b) => b.id === id);
-    const ok = window.confirm(
-      `Remove blog ${blogToRemove.title} by ${blogToRemove.author}`
-    );
-    if (ok) {
-      removeBlog(id);
-      notifyWith(
-        {
-          message: `Blog ${blogToRemove.title} by ${blogToRemove.author} deleted`,
-          type: "success",
-        },
-        5
-      );
-    }
-  };
-
-  const handleLogout = () => {
-    logoutUser();
-  };
+  const blogById = (id) => blogs.find((b) => b.id === id);
+  const matchedBlog = blogMatch ? blogById(blogMatch.params.id) : null;
 
   const Main = () => {
-    const byLikes = (b1, b2) => b2.likes - b1.likes;
     if (!user) {
       return (
-        <div>
+        <div className="container">
           <h2>login to application</h2>
-
-          <LoginForm login={handleLogin} />
+          <LoginForm />
         </div>
       );
     }
     return (
-      <div>
-        <h2>blogs</h2>
+      <div className="container">
+        <h2>blogs app</h2>
         <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-          <NewBlog createBlog={addBlog} />
+          <NewBlog blogRef={blogFormRef} />
         </Togglable>
-
-        {blogs.sort(byLikes).map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            handleLike={handleLike}
-            handleRemove={handleRemove}
-            own={user.username === blog.userId.username}
-          />
-        ))}
+        <BlogList blogs={blogs} />
       </div>
     );
   };
+
   return (
-    <div>
+    <div className="container">
       {user && (
         <div>
           <Menu />
-          <p>
-            {user.name} logged in <button onClick={handleLogout}>logout</button>
-          </p>
         </div>
       )}
       <Notification />
       <Routes>
+        <Route
+          path="/blogs/:id"
+          element={
+            <Blog
+              loggedIn={user ? true : false}
+              blog={matchedBlog}
+              own={
+                user && matchedBlog
+                  ? user.username === matchedBlog.userId.username
+                  : false
+              }
+            />
+          }
+        />
         <Route
           path="/users/:id"
           element={<User loggedIn={user ? true : false} user={matchedUser} />}
@@ -179,24 +99,4 @@ const App = ({
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    blogs: state.blogs,
-    user: state.user,
-    users: state.users,
-  };
-};
-
-const mapDispatchToProps = {
-  notifyWith,
-  initBlogs,
-  createBlog,
-  likeBlog,
-  removeBlog,
-  loginUser,
-  logoutUser,
-  loadUser,
-  initUsers,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

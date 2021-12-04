@@ -24,7 +24,7 @@ export const likeBlog = (blog) => {
   return async (dispatch) => {
     const likedBlog = await blogService.update(blog);
     dispatch({
-      type: "LIKE_BLOG",
+      type: "UPDATE_BLOG",
       data: likedBlog,
     });
   };
@@ -35,7 +35,18 @@ export const removeBlog = (id) => {
     await blogService.remove(id);
     dispatch({
       type: "REMOVE_BLOG",
-      data: id,
+      data: { id },
+    });
+  };
+};
+
+export const commentBlog = (id, comment) => {
+  return async (dispatch) => {
+    const addedBlog = await blogService.comment(id, comment);
+
+    dispatch({
+      type: "UPDATE_BLOG",
+      data: addedBlog,
     });
   };
 };
