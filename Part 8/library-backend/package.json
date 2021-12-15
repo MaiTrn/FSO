@@ -1,0 +1,26 @@
+{
+  "name": "library-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Mai",
+  "license": "MIT",
+  "scripts": {
+    "debug": "node index.js"
+  },
+  "dependencies": {
+    "@graphql-tools/schema": "^8.3.1",
+    "apollo-server": "^3.5.0",
+    "apollo-server-core": "^3.5.0",
+    "apollo-server-express": "^3.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "graphql": "^16.0.1",
+    "graphql-subscriptions": "^2.0.0",
+    "install": "^0.13.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.15",
+    "mongoose-unique-validator": "^3.0.0",
+    "npm": "^8.3.0",
+    "subscriptions-transport-ws": "^0.11.0"
+  }
+}
