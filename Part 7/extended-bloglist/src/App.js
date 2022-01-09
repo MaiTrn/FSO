@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Routes, Route, useMatch } from "react-router-dom";
-
+//routes is switch
 import BlogList from "./components/BlogList";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
