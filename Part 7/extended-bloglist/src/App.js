@@ -79,7 +79,7 @@ const App = () => {
               blog={matchedBlog}
               own={
                 user && matchedBlog
-                  ? user.username === matchedBlog.userId.username
+                  ? user.username === matchedBlog.user.username
                   : false
               }
             />

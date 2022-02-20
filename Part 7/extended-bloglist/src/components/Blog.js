@@ -79,7 +79,7 @@ const Blog = ({ blog, loggedIn, own }) => {
           <i class="bi bi-hand-thumbs-up"></i>
         </Button>
       </p>
-      <p>added by {blog.userId.name}</p>
+      <p>added by {blog.user.name}</p>
       {own && (
         <Button variant="danger" onClick={handleRemove}>
           remove
