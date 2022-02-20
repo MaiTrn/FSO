@@ -12,7 +12,7 @@ beforeEach(async () => {
   const user = await User.findOne({ username: "root" });
 
   for (let b of helper.initialBlogs) {
-    let blogObj = new Blog({ ...b, userId: user.id });
+    let blogObj = new Blog({ ...b, user: user.id });
     await blogObj.save();
   }
 });

@@ -2,7 +2,7 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({}).populate("userId", {
+  const blogs = await Blog.find({}).populate("user", {
     username: 1,
     name: 1,
   });
@@ -10,7 +10,7 @@ blogsRouter.get("/", async (request, response) => {
 });
 blogsRouter.get("/:id", async (request, response) => {
   const id = request.params.id;
-  const blog = await Blog.findById(id).populate("userId", {
+  const blog = await Blog.findById(id).populate("user", {
     username: 1,
     name: 1,
   });
@@ -33,7 +33,7 @@ blogsRouter.post("/", async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
-    userId: user._id,
+    user: user._id,
   });
 
   const addedBlog = await blog.save();
@@ -74,7 +74,7 @@ blogsRouter.delete("/:id", async (request, response) => {
       .json({ error: `cannot find blog with id ${id}` })
       .end();
   }
-  if (blog.userId.toString() === user.id.toString()) {
+  if (blog.user.toString() === user.id.toString()) {
     await Blog.findByIdAndRemove(id);
     response.status(204).end();
   } else
