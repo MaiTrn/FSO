@@ -20,7 +20,7 @@ const Blog = ({ blog, user, updateLike, removeBlog }) => {
   };
   const increaseLike = async () => {
     const updatedBlog = {
-      userId: blog.userId.id,
+      user: blog.user.id,
       title: blog.title,
       author: blog.author,
       url: blog.url,
@@ -50,8 +50,8 @@ const Blog = ({ blog, user, updateLike, removeBlog }) => {
         <p>
           Likes {likes} <button onClick={increaseLike}>like</button>
         </p>
-        <p>{blog.userId.name}</p>
-        {blog.userId.username === user && (
+        <p>{blog.user.name}</p>
+        {blog.user.username === user && (
           <button onClick={remove}>Remove</button>
         )}
       </div>

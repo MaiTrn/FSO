@@ -13,7 +13,7 @@ describe("Blog component", () => {
     url: "https://reactpatterns.com/",
     likes: 0,
     id: "61a3a591b034143b46845da0",
-    userId: {
+    user: {
       name: "tester",
       username: "testing",
     },

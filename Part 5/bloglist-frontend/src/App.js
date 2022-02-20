@@ -60,7 +60,7 @@ const App = () => {
       setBlogs(
         blogs.concat({
           ...newBlog,
-          userId: { name: user.name, username: user.username },
+          user: { name: user.name, username: user.username },
         })
       );
       setTimeout(() => {
